@@ -1,18 +1,38 @@
-export function requireAuth(req, res, next) {
-  const authHeader = req.headers.authorization || '';
-  if (!authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Authentication required.' });
-  }
-
-  next();
-}
-
-export function authorizeRoles(...roles) {
-  return (req, res, next) => {
-    const userRole = req.headers['x-role'] || 'STUDENT';
-    if (!roles.includes(userRole)) {
-      return res.status(403).json({ error: 'You do not have access to this resource.' });
-    }
-    next();
-  };
-}
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#102b4e" />
+  <meta name="description" content="Портали ягонаи соҳаи маорифи шаҳри Истиқлол." />
+  <title>МАОРИФ ИСТИКЛОЛ — Портали маориф</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Гузаштан ба муҳтаво</a>
+  <header class="topbar">
+    <div class="container nav">
+      <a class="brand" href="/" aria-label="МАОРИФ ИСТИКЛОЛ — Асосӣ"><span class="brand-mark">М</span><span><b>МАОРИФ</b><small>ИСТИКЛОЛ</small></span></a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Кушодани меню" aria-expanded="false">☰</button>
+      <nav class="main-nav" id="main-nav" aria-label="Навигатсияи асосӣ">
+        <a href="/" data-i18n="home">Асосӣ</a><a href="#education" data-i18n="education">Маориф</a><a href="#news" data-i18n="news">Ахбор</a><a href="#schools" data-i18n="schools">Мактабҳо</a><a href="#about" data-i18n="about">Дар бораи мо</a><a href="#contacts" data-i18n="contacts">Тамос</a>
+      </nav>
+      <div class="nav-actions"><label class="sr-only" for="language-switcher">Забон</label><select id="language-switcher" aria-label="Забон"><option value="tg">Тоҷикӣ</option><option value="ru">Русский</option><option value="en">English</option></select><button class="login-button" id="login-button" data-i18n="login">Вуруд</button></div>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" id="education"><div class="hero-pattern"></div><div class="container hero-grid"><div class="hero-copy"><span class="eyebrow"><i></i><span data-i18n="eyebrow">ПОРТАЛИ РАСМИИ СОҲАИ МАОРИФ</span></span><h1 id="hero-title">Маориф — сармояи <span>ояндаи мо</span></h1><p id="hero-subtitle">Портали ягонаи соҳаи маорифи шаҳри Истиқлол.</p><div class="hero-actions"><a class="button button-gold" href="#schools"><span data-i18n="explore">Муассисаҳои таълимӣ</span><span aria-hidden="true">↗</span></a><a class="text-link" href="#about"><span data-i18n="learn">Маълумоти бештар</span><span aria-hidden="true">→</span></a></div><div class="hero-note"><span class="seal">✳</span><span data-i18n="region">Шаҳри Истиқлол · Вилояти Суғд</span></div></div><aside class="hero-panel"><div class="panel-top"><span class="panel-label" data-i18n="snapshot">МАОРИФИ ИМРӮЗ</span><span class="live-dot" aria-label="Зинда"></span></div><div id="stats-list" class="stats-list"><div class="loading-line"></div><div class="loading-line"></div><div class="loading-line"></div></div><p class="panel-foot" data-i18n="dataNote">Нишондиҳандаҳо аз маълумоти сабтшудаи система ҳисоб карда мешаванд.</p></aside></div><div class="hero-bottom container"><span>МАОРИФ · ДОНИШ · ОЯНДА</span><span>01 — 03</span></div></section>
+    <section class="section intro" id="about"><div class="container intro-grid"><div><span class="section-kicker" data-i18n="welcome">ХУШ ОМАДЕД</span><h2 data-i18n="welcomeTitle">Платформаи ягона барои ҷомеаи маорифи шаҳр</h2></div><p data-i18n="welcomeText">Маълумот дар бораи муассисаҳо, хабарҳои соҳа ва ташаббусҳои таълимии шаҳри Истиқлол — дар як макон.</p></div></section>
+    <section class="section content-section" id="news"><div class="container"><div class="section-heading"><div><span class="section-kicker" data-i18n="updates">НАВИГАРИҲО</span><h2 id="news-title">Хабарҳои охирин</h2></div><a class="under-link" href="#news" data-i18n="allNews">Ҳамаи хабарҳо <span>→</span></a></div><div id="news-list" class="card-grid"><p class="empty-state" data-i18n="loading">Бор шуда истодааст…</p></div></div></section>
+    <section class="section schools-section" id="schools"><div class="container schools-grid"><div class="schools-copy"><span class="section-kicker" data-i18n="network">ШАБАКАИ МУАССИСАҲО</span><h2 data-i18n="schoolsTitle">Муассисаҳои таълимӣ</h2><p data-i18n="schoolsText">Маълумоти расмии муассисаҳои таълимии шаҳрро бинед.</p><a class="button button-blue" href="#school-list"><span data-i18n="browseSchools">Рӯйхати мактабҳо</span><span>→</span></a></div><div id="school-list" class="school-list"><p class="empty-state" data-i18n="loading">Бор шуда истодааст…</p></div></div></section>
+    <section class="section announcements-section"><div class="container"><div class="section-heading"><div><span class="section-kicker" data-i18n="important">МУҲИМ</span><h2 id="announcements-title">Эълонҳо</h2></div></div><div id="announcements-list" class="announcement-list"><p class="empty-state" data-i18n="loading">Бор шуда истодааст…</p></div></div></section>
+    <section class="cta-section" id="contacts"><div class="container cta-inner"><div><span class="section-kicker" data-i18n="contactKicker">ТАМОС</span><h2 data-i18n="contactTitle">Якҷоя барои маорифи беҳтар</h2><p data-i18n="contactText">Барои гирифтани маълумоти расмӣ бо шуъбаи маорифи шаҳр тамос гиред.</p></div><a class="button button-gold" href="mailto:info@maorif.istiklol"><span data-i18n="contactUs">Ба мо нависед</span><span>↗</span></a></div></section>
+  </main>
+  <footer class="footer"><div class="container footer-main"><a class="brand footer-brand" href="/"><span class="brand-mark">М</span><span><b>МАОРИФ</b><small>ИСТИКЛОЛ</small></span></a><p data-i18n="footerText">Портали расмии соҳаи маорифи шаҳри Истиқлол.</p><span>© <span id="year"></span> MAORIF ISTIKLOL</span></div></footer>
+  <dialog id="login-dialog" class="login-dialog"><form method="dialog"><button class="dialog-close" aria-label="Пӯшидан">×</button></form><span class="section-kicker" data-i18n="secureAccess">ДАСТРАСИИ МУҲОФИЗАТШУДА</span><h2 data-i18n="loginTitle">Вуруд ба система</h2><form id="login-form"><label for="email" data-i18n="username">Номи корбар</label><input id="email" name="email" type="email" autocomplete="username" required /><label for="password" data-i18n="password">Рамз</label><input id="password" name="password" type="password" autocomplete="current-password" required /><button class="button button-blue" type="submit" data-i18n="login">Вуруд</button><p id="login-message" role="status"></p></form></dialog>
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

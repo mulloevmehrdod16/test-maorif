@@ -1,217 +1,37 @@
-:root {
-  --navy: #0f2747;
-  --navy-2: #163c66;
-  --blue: #1a6cad;
-  --turquoise: #5cc7d8;
-  --gold: #d9b36c;
-  --white: #ffffff;
-  --ink: #16314a;
-  --soft: #eef5fb;
-  --gray: #6b7b8c;
-  --line: #dfeaf5;
+const translations = {
+  tg: { home:'Асосӣ',education:'Маориф',news:'Ахбор',schools:'Мактабҳо',about:'Дар бораи мо',contacts:'Тамос',login:'Вуруд',eyebrow:'ПОРТАЛИ РАСМИИ СОҲАИ МАОРИФ',explore:'Муассисаҳои таълимӣ',learn:'Маълумоти бештар',region:'Шаҳри Истиқлол · Вилояти Суғд',snapshot:'МАОРИФИ ИМРӮЗ',dataNote:'Нишондиҳандаҳо аз маълумоти сабтшудаи система ҳисоб карда мешаванд.',welcome:'ХУШ ОМАДЕД',welcomeTitle:'Платформаи ягона барои ҷомеаи маорифи шаҳр',welcomeText:'Маълумот дар бораи муассисаҳо, хабарҳои соҳа ва ташаббусҳои таълимии шаҳри Истиқлол — дар як макон.',updates:'НАВИГАРИҲО',allNews:'Ҳамаи хабарҳо',loading:'Бор шуда истодааст…',network:'ШАБАКАИ МУАССИСАҲО',schoolsTitle:'Муассисаҳои таълимӣ',schoolsText:'Маълумоти расмии муассисаҳои таълимии шаҳрро бинед.',browseSchools:'Рӯйхати мактабҳо',important:'МУҲИМ',contactKicker:'ТАМОС',contactTitle:'Якҷоя барои маорифи беҳтар',contactText:'Барои гирифтани маълумоти расмӣ бо шуъбаи маорифи шаҳр тамос гиред.',contactUs:'Ба мо нависед',footerText:'Портали расмии соҳаи маорифи шаҳри Истиқлол.',secureAccess:'ДАСТРАСИИ МУҲОФИЗАТШУДА',loginTitle:'Вуруд ба система',username:'Номи корбар',password:'Рамз',read:'Муфассал',empty:'Маълумот ҳоло дастрас нест.'},
+  ru: { home:'Главная',education:'Образование',news:'Новости',schools:'Школы',about:'О портале',contacts:'Контакты',login:'Войти',eyebrow:'ОФИЦИАЛЬНЫЙ ОБРАЗОВАТЕЛЬНЫЙ ПОРТАЛ',explore:'Учебные учреждения',learn:'Подробнее о нас',region:'Город Истиклол · Согдийская область',snapshot:'ОБРАЗОВАНИЕ СЕГОДНЯ',dataNote:'Показатели рассчитываются по данным, сохранённым в системе.',welcome:'ДОБРО ПОЖАЛОВАТЬ',welcomeTitle:'Единая платформа для образовательного сообщества города',welcomeText:'Информация об учреждениях, новости отрасли и образовательные инициативы города Истиклол — в одном месте.',updates:'ОБНОВЛЕНИЯ',allNews:'Все новости',loading:'Загрузка…',network:'СЕТЬ УЧРЕЖДЕНИЙ',schoolsTitle:'Образовательные учреждения',schoolsText:'Официальная информация об образовательных учреждениях города.',browseSchools:'Список школ',important:'ВАЖНО',contactKicker:'КОНТАКТЫ',contactTitle:'Вместе — к лучшему образованию',contactText:'Свяжитесь с городским отделом образования для получения официальной информации.',contactUs:'Написать нам',footerText:'Официальный образовательный портал города Истиклол.',secureAccess:'ЗАЩИЩЁННЫЙ ДОСТУП',loginTitle:'Вход в систему',username:'Имя пользователя',password:'Пароль',read:'Подробнее',empty:'Информация пока недоступна.'},
+  en: { home:'Home',education:'Education',news:'News',schools:'Schools',about:'About',contacts:'Contact',login:'Sign in',eyebrow:'OFFICIAL EDUCATION PORTAL',explore:'Education institutions',learn:'Learn more',region:'Istiklol · Sughd Region',snapshot:'EDUCATION TODAY',dataNote:'Figures are calculated from information stored in the system.',welcome:'WELCOME',welcomeTitle:'One platform for the city’s education community',welcomeText:'Information about institutions, education news, and learning initiatives in Istiklol — all in one place.',updates:'LATEST UPDATES',allNews:'All news',loading:'Loading…',network:'OUR INSTITUTIONS',schoolsTitle:'Education institutions',schoolsText:'Browse official information about education institutions in the city.',browseSchools:'Browse schools',important:'IMPORTANT',contactKicker:'CONTACT',contactTitle:'Together for better education',contactText:'Contact the city education department for official information.',contactUs:'Contact us',footerText:'Official education portal of the city of Istiklol.',secureAccess:'SECURE ACCESS',loginTitle:'Sign in',username:'Username',password:'Password',read:'Read more',empty:'Information is not available yet.'}
+};
+const $ = (id) => document.getElementById(id);
+let language = localStorage.getItem('maorif-language') || 'tg';
+function applyLanguage(lang) {
+  language = translations[lang] ? lang : 'tg';
+  localStorage.setItem('maorif-language', language);
+  document.documentElement.lang = language;
+  $('language-switcher').value = language;
+  document.querySelectorAll('[data-i18n]').forEach((el) => { const key = el.dataset.i18n; if (translations[language][key]) el.textContent = translations[language][key]; });
 }
-
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: var(--soft);
-  color: var(--ink);
+function text(node, value) { node.textContent = value; }
+async function loadHome() {
+  applyLanguage(language);
+  try {
+    const [homeRes, schoolsRes] = await Promise.all([fetch(`/api/public/home?lang=${language}`), fetch('/api/public/schools')]);
+    if (!homeRes.ok || !schoolsRes.ok) throw new Error('unavailable');
+    const data = await homeRes.json(); const schools = await schoolsRes.json();
+    text($('hero-title'), data.hero.title); text($('hero-subtitle'), data.hero.subtitle);
+    $('stats-list').replaceChildren(...data.stats.map((item) => { const row=document.createElement('div');row.className='stat-item';const label=document.createElement('span');label.textContent=item.label;const value=document.createElement('strong');value.textContent=Number(item.value).toLocaleString(language === 'tg' ? 'tg' : language);row.append(label,value);return row; }));
+    const newsList=$('news-list');newsList.replaceChildren();
+    if (!data.news.length) newsList.innerHTML=`<p class="empty-state">${translations[language].empty}</p>`;
+    data.news.forEach((item)=>{const article=document.createElement('article');article.className='news-card';const date=document.createElement('time');date.className='news-date';date.textContent=item.publishedAt?new Date(item.publishedAt).toLocaleDateString(language):'';const heading=document.createElement('h3');heading.textContent=item.title;const link=document.createElement('a');link.href=`/news/${encodeURIComponent(item.slug)}`;link.textContent=`${translations[language].read} →`;article.append(date,heading,link);newsList.append(article);});
+    const schoolList=$('school-list');schoolList.replaceChildren();if(!schools.items.length)schoolList.innerHTML=`<p class="empty-state">${translations[language].empty}</p>`;
+    schools.items.slice(0,6).forEach((school)=>{const a=document.createElement('a');a.className='school-card';a.href=`/schools/${encodeURIComponent(school.id)}`;const name=document.createElement('strong');name.textContent=school.name;const city=document.createElement('span');city.textContent=school.city||'Истиқлол';a.append(name,city);schoolList.append(a);});
+    const announcements=$('announcements-list');announcements.replaceChildren();if(!data.announcements.length)announcements.innerHTML=`<p class="empty-state">${translations[language].empty}</p>`;
+    data.announcements.forEach((item)=>{const article=document.createElement('article');article.className='announcement-card';const heading=document.createElement('h3');heading.textContent=item.title;const body=document.createElement('p');body.textContent=item.content;article.append(heading,body);announcements.append(article);});
+  } catch { document.querySelectorAll('.empty-state').forEach((el)=>text(el,translations[language].empty)); $('stats-list').innerHTML=`<p class="empty-state">${translations[language].empty}</p>`; }
 }
-
-a { color: inherit; text-decoration: none; }
-button, select {
-  font: inherit;
-}
-
-.container {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-}
-
-.topbar {
-  background: linear-gradient(90deg, var(--navy), var(--navy-2));
-  color: var(--white);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 76px;
-  gap: 24px;
-}
-
-.brand {
-  font-size: 1.3rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.main-nav {
-  display: flex;
-  gap: 20px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.9);
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-select {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.08);
-  color: var(--white);
-}
-
-button.primary, button.secondary {
-  border: none;
-  border-radius: 999px;
-  padding: 12px 18px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-button.primary {
-  background: linear-gradient(135deg, var(--gold), #ebd6a6);
-  color: var(--navy);
-}
-
-button.secondary {
-  background: transparent;
-  color: var(--navy);
-  border: 1px solid var(--line);
-}
-
-.hero {
-  background: linear-gradient(135deg, rgba(16,39,71,0.97), rgba(26,108,173,0.9));
-  color: var(--white);
-  padding: 72px 0 48px;
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 32px;
-  align-items: center;
-}
-
-.eyebrow {
-  display: inline-block;
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.8;
-  margin-bottom: 12px;
-}
-
-h1 {
-  font-size: clamp(2.5rem, 5vw, 4.3rem);
-  line-height: 1.1;
-  margin: 0 0 16px;
-}
-
-.hero p {
-  color: rgba(255,255,255,0.84);
-  font-size: 1.05rem;
-  max-width: 650px;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 24px;
-}
-
-.stats-card {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 24px;
-  backdrop-filter: blur(4px);
-}
-
-.stats-list {
-  display: grid;
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding: 10px 0;
-}
-
-.section {
-  padding: 54px 0;
-}
-.section.alt {
-  background: #f4f8fc;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.card {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 12px 26px rgba(20, 45, 74, 0.06);
-}
-
-.card h3, .card h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.card p {
-  color: var(--gray);
-  margin-bottom: 0;
-}
-
-.card-list {
-  display: grid;
-  gap: 14px;
-}
-
-.footer {
-  background: var(--navy);
-  color: var(--white);
-  padding: 40px 0 56px;
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 24px;
-}
-
-@media (max-width: 860px) {
-  .main-nav { display: none; }
-  .hero-grid, .card-grid, .footer-grid {
-    grid-template-columns: 1fr;
-  }
-}
+$('year').textContent=new Date().getFullYear();$('language-switcher').addEventListener('change',(event)=>{language=event.target.value;loadHome();});
+$('menu-toggle').addEventListener('click',()=>{const nav=$('main-nav');const open=nav.classList.toggle('open');$('menu-toggle').setAttribute('aria-expanded',String(open));});
+$('login-button').addEventListener('click',()=>$('login-dialog').showModal());
+$('login-form').addEventListener('submit',async(event)=>{event.preventDefault();const message=$('login-message');message.textContent='';try{const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('email').value,password:$('password').value})});const result=await response.json();if(!response.ok)throw new Error(result.error||'Sign in failed');if(result.requiresPasswordChange){sessionStorage.setItem('maorif-first-login-token',result.firstLoginToken);message.textContent=language==='tg'?'Ҳангоми вориди аввал рамзро иваз кунед.':language==='ru'?'При первом входе необходимо сменить пароль.':'Change your password to finish first-time sign-in.';return;}sessionStorage.setItem('maorif-token',result.token);location.href=`/${result.user.role.toLowerCase().replaceAll('_','-')}/dashboard`;}catch(error){message.textContent=error.message;}});
+loadHome();
