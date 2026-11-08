@@ -1,0 +1,18 @@
+export function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization || '';
+  if (!authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authentication required.' });
+  }
+
+  next();
+}
+
+export function authorizeRoles(...roles) {
+  return (req, res, next) => {
+    const userRole = req.headers['x-role'] || 'STUDENT';
+    if (!roles.includes(userRole)) {
+      return res.status(403).json({ error: 'You do not have access to this resource.' });
+    }
+    next();
+  };
+}

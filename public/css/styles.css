@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAORIF ISTIKLOL</title>
+    <meta
+      name="description"
+      content="MAORIF ISTIKLOL education portal, school management platform and electronic journal."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <div class="brand">MAORIF ISTIKLOL</div>
+        <nav class="main-nav">
+          <a href="#">Асосӣ</a>
+          <a href="#">Маориф</a>
+          <a href="#">Ахбор</a>
+          <a href="#">Мактабҳо</a>
+          <a href="#">Контакт</a>
+        </nav>
+        <div class="nav-actions">
+          <select id="language-switcher">
+            <option value="tg">Тоҷикӣ</option>
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+          </select>
+          <button class="primary">Логин</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <span class="eyebrow">Digital Education Platform</span>
+            <h1 id="hero-title">Маориф ва фарҳанги оянда</h1>
+            <p id="hero-subtitle">
+              Платформаи ягонаи маориф, идоракунии мактабҳо, журналҳои электронӣ ва маълумоти оммавӣ.
+            </p>
+            <div class="hero-actions">
+              <button class="primary">Шинос шудан</button>
+              <button class="secondary">Дидани маълумот</button>
+            </div>
+          </div>
+          <div class="stats-card">
+            <h3>Statistika</h3>
+            <div id="stats-list" class="stats-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2 id="news-title">Ахборҳои охирин</h2>
+            <a href="#">Бештар</a>
+          </div>
+          <div id="news-list" class="card-grid"></div>
+        </div>
+      </section>
+
+      <section class="section alt">
+        <div class="container">
+          <div class="section-header">
+            <h2 id="announcements-title">Эълонҳо</h2>
+          </div>
+          <div id="announcements-list" class="card-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <h4>MAORIF ISTIKLOL</h4>
+          <p>Платформаи маорифии давлатӣ ва шаҳрӣ.</p>
+        </div>
+        <div>
+          <h5>Эътибор</h5>
+          <ul>
+            <li>Ҳуқуқҳои донишҷӯён</li>
+            <li>Маълумоти оммавӣ</li>
+            <li>Мақомоти маориф</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+  </body>
+</html>
